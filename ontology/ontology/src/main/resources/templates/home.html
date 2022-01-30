@@ -1,10 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%;">
     <head th:replace="layouts/header :: header"></head>
     <head>
-        <!--link href="/css/home.css" rel="stylesheet"-->
+        <link href="/css/home.css" rel="stylesheet">
     </head>
-    <body>
-        ljklm
+    <body style="height: 100%;">
+        <div class="container" style="height: 100%;">
+            <div class="d-flex" style="height:50%;">
+                <div class="col-6" style="height:100%;">
+                    <button>Add Class</button>
+                    <button>Add Property</button>
+                    <button>Add Datatype</button>
+
+                    <div id="addClass">
+                        <label for="newClassLabel">Class Label</label>
+                        <input id = "newClassLabel" name = "newClassLabel" type="text">
+                        <button onclick="addClass();">Add Class</button>
+                    </div>
+
+                    <div id="addProperty">
+                        <input type="radio" id="Type1" name="prpertyType" onchange="removeDefault();" value="1">
+                        <label for="Type1">Object Property</label><br>
+                        <input type="radio" id="Type2" name="prpertyType" onchange="addDefault();" value="2">
+                        <label for="Type2">Sub-class of</label><br>
+                        <label for="newPropertyLabel">Property Label</label>
+                        <input id = "newPropertyLabel" name = "newPropertyLabel" type="text"><br>
+                        <select id="newPropertyFrom" name="newPropertyFrom">
+                        </select>
+                        <select id="newPropertyTo" name="newPropertyTo">
+                        </select>
+                        <button onclick="addProperty();">Add Property</button>
+                    </div>
+
+                    <div id="addDatatype">
+                        <label for="newDatatypeLabel">Datatype Label</label>
+                        <input id = "newDatatypeLabel" name = "newDatatypeLabel" type="text"><br>
+                        <select id="newDatatypeType" name="newDatatypeType">
+                            <option value="boolean">boolean</option>
+                            <option value="double">double</option>
+                            <option value="integer">integer</option>
+                            <option value="string">string</option>
+                        </select>
+                        <select id="newDatatypeClass" name="newDatatypeClass">
+                        </select>
+                        <button onclick="addDatatype();">Add Datatype</button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div>
+                        Classes -
+                    </div>
+                    <div id="classes" class="scrollbar" style="height:100%;overflow: scroll;"></div>
+                </div>
+                <div class="col-3" style="height:100%;">
+                    <div class="scrollbar" style="height:50%;">
+                        <div>
+                            Object Property -
+                        </div>
+                        <div id="objectProperty" class="scrollbar" style="height:100%;overflow: scroll;padding-bottom: 0;"></div>
+                    </div>
+                    <div class="scrollbar" style="height:50%;">
+                        <div>
+                            Sub-class Property -
+                        </div>
+                        <div id="subClassProperty" class="scrollbar" style="height:100%;overflow: scroll;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:50%;">
+                <div class="scrollbar" style="height:100%;overflow: scroll;">
+                    Log -
+                    <div id="logs"></div>
+                </div>
+            </div>
+        </div>
+        <!--div>
+            Datatypes - 
+            <div id="datatypes"></div>
+        </div-->
+        
     </body>
+    <script src="/js/home.js"></script>
 </html>
