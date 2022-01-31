@@ -5,44 +5,90 @@
         <link href="/css/home.css" rel="stylesheet">
     </head>
     <body style="height: 100%;">
-        <div class="container" style="height: 100%;">
+        <div class="container pt-4" style="height: 100%;">
             <div class="d-flex" style="height:50%;">
                 <div class="col-6" style="height:100%;">
                     <button onclick="classClick();" class="btn btn-primary">Add Class</button>
                     <button onclick="propertyClick();" class="btn btn-primary">Add Property</button>
                     <button onclick="dataClick();" class="btn btn-primary">Add Datatype</button>
                     
-                    <div id="addClass">
-                        <label for="newClassLabel">Class Label</label>
-                        <input id = "newClassLabel" name = "newClassLabel" type="text">
+                    <div id="addClass" class="pt-3">
+                        <div class="form-group row">
+                            <label for="newClassLabel" class="col-sm-3 col-form-label">Class Label</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id = "newClassLabel" name = "newClassLabel" type="text">
+                            </div>
+                        </div>
+                        
                         <button onclick="addClass();" class="btn btn-primary">Add Class</button>
                     </div>
 
-                    <div id="addProperty">
-                        <input type="radio" id="Type1" name="prpertyType" onchange="removeDefault();" value="1">
-                        <label for="Type1">Object Property</label><br>
-                        <input type="radio" id="Type2" name="prpertyType" onchange="addDefault();" value="2">
-                        <label for="Type2">Sub-class of</label><br>
-                        <label for="newPropertyLabel">Property Label</label>
-                        <input id = "newPropertyLabel" name = "newPropertyLabel" type="text"><br>
-                        <select id="newPropertyFrom" name="newPropertyFrom" style="width:100%;">
-                        </select>
-                        <select id="newPropertyTo" name="newPropertyTo" style="width:100%;">
-                        </select>
+                    <div id="addProperty" class="pt-3">
+                        <div class="d-flex">
+                            <div class="col-6">
+                                <input type="radio" id="Type1" name="prpertyType" onchange="removeDefault();" value="1">
+                                <label for="Type1">Object Property</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" id="Type2" name="prpertyType" onchange="addDefault();" value="2">
+                                <label for="Type2">Sub-class of</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="newPropertyLabel" class="col-sm-3 col-form-label">Property Label</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id = "newPropertyLabel" name = "newPropertyLabel" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label" for="newPropertyFrom">From class</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="newPropertyFrom" name="newPropertyFrom" style="width:100%;">
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label" for="newPropertyTo">To class</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="newPropertyTo" name="newPropertyTo" style="width:100%;">
+                                </select>
+                            </div>
+                        </div>
+
                         <button onclick="addProperty();" class="btn btn-primary">Add Property</button>
                     </div>
 
-                    <div id="addDatatype">
-                        <label for="newDatatypeLabel">Datatype Label</label>
-                        <input id = "newDatatypeLabel" name = "newDatatypeLabel" type="text"><br>
-                        <select id="newDatatypeType" name="newDatatypeType">
-                            <option value="boolean">boolean</option>
-                            <option value="double">double</option>
-                            <option value="integer">integer</option>
-                            <option value="string">string</option>
-                        </select>
-                        <select id="newDatatypeClass" name="newDatatypeClass">
-                        </select>
+                    <div id="addDatatype" class="pt-3">
+                        <div class="form-group row">
+                            <label for="newDatatypeLabel" class="col-sm-3 col-form-label">Datatype Label</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id = "newDatatypeLabel" name = "newDatatypeLabel" type="text">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label" for="newDatatypeType">Datatype</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="newDatatypeType" name="newDatatypeType">
+                                    <option value="boolean">boolean</option>
+                                    <option value="double">double</option>
+                                    <option value="integer">integer</option>
+                                    <option value="string">string</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label" for="newDatatypeClass">Class</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="newDatatypeClass" name="newDatatypeClass">
+                                </select>
+                            </div>
+                        </div>
+
                         <button onclick="addDatatype();" class="btn btn-primary">Add Datatype</button>
                     </div>
                 </div>
@@ -50,27 +96,33 @@
                     <div>
                         Classes -
                     </div>
-                    <div id="classes" class="scrollbar" style="height:100%;overflow: scroll;"></div>
+                    <div id="classes" class="scrollbar console" style="height:100%;overflow: scroll;"></div>
                 </div>
                 <div class="col-3" style="height:100%;">
                     <div class="scrollbar" style="height:50%;">
-                        <div>
-                            Object Property -
+                        <div style="height:100%;">
+                            <div>
+                                Object Property -
+                            </div>
+                            <div id="objectProperty" class="scrollbar console" style="height:80%;overflow: scroll;padding-bottom: 0;"></div>
                         </div>
-                        <div id="objectProperty" class="scrollbar" style="height:100%;overflow: scroll;padding-bottom: 0;"></div>
                     </div>
                     <div class="scrollbar" style="height:50%;">
-                        <div>
-                            Sub-class Property -
+                        <div style="height:100%;">
+                            <div>
+                                Sub-class Property -
+                            </div>
+                            <div id="subClassProperty" class="scrollbar console" style="height:100%;overflow: scroll;"></div>
                         </div>
-                        <div id="subClassProperty" class="scrollbar" style="height:100%;overflow: scroll;"></div>
                     </div>
                 </div>
             </div>
-            <div style="height:50%;">
-                <div class="scrollbar" style="height:100%;overflow: scroll;">
-                    Log -
-                    <div id="logs"></div>
+            <div class="pt-4 pr-3 pl-3" style="height:40%;">
+                <div style="height:100%;">
+                    <div>
+                        Log -
+                    </div>
+                    <div id="logs" class="scrollbar console" style="height:100%;overflow: scroll;"></div>
                 </div>
             </div>
         </div>

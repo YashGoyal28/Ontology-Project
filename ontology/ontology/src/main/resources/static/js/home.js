@@ -31,13 +31,13 @@ class datatype{
 function addClass(){
     var label = $('#newClassLabel').val().trim();
     if(label==""){
-        $('#logs').append(`Label field can not be empty<br>`);
+        $('#logs').prepend(`<div class="red">Label field can not be empty</div>`);
         return;
     }
     nodes_cnt++;
     var className = "class"+nodes_cnt.toString();
     nodes.set(className,label);
-    $('#logs').append(`New class labelled ${label} added<br>`);
+    $('#logs').prepend(`<div class="green">New class labelled ${label} added</div>`);
     $('#classes').append(`<div id="${className}">${label}</div>`);
     $('#newPropertyFrom').append(`<option value="${className}">${label} (${className})</option>`);
     $('#newPropertyTo').append(`<option value="${className}">${label} (${className})</option>`);
@@ -53,15 +53,15 @@ function addProperty(){
         var from = $('#newPropertyFrom').val();
         var to = $('#newPropertyTo').val();
         if(label==""){
-            $('#logs').append(`Label field can not be empty<br>`);
+            $('#logs').prepend(`<div class="red">Label field can not be empty</div>`);
             return;
         }
         if(from==to){
-            $('#logs').append(`Property can only be added between two different classes<br>`);
+            $('#logs').prepend(`<div class="red">Property can only be added between two different classes</div>`);
             return;
         }
         objectProperty.set(propertyName,new property(from, to, label));
-        $('#logs').append(`${nodes.get(from)} ${label} ${nodes.get(to)} property added<br>`);
+        $('#logs').prepend(`<div class="green">${nodes.get(from)} ${label} ${nodes.get(to)} property added</div>`);
         $('#objectProperty').append(`<div id="${propertyName}">${nodes.get(from)} ${label} ${nodes.get(to)}</div>`);
     }else if(type=="2"){
         subClassProperty_cnt++;
@@ -70,23 +70,23 @@ function addProperty(){
         var from = $('#newPropertyFrom').val();
         var to = $('#newPropertyTo').val();
         if(from==to){
-            $('#logs').append(`Property can only be added between two different classes<br>`);
+            $('#logs').prepend(`<div class="red">Property can only be added between two different classes</div>`);
             return;
         }
         if(allsubClassRelation.has(`${from}->${to}`)){
-            $('#logs').append(`Property ${nodes.get(from)} ${label} ${nodes.get(to)} is already added<br>`);
+            $('#logs').prepend(`<div class="yellow">Property ${nodes.get(from)} ${label} ${nodes.get(to)} is already added</div>`);
             return;
         }
         if(allsubClassRelation.has(`${to}->${from}`)){
-            $('#logs').append(`Property ${nodes.get(from)} ${label} ${nodes.get(to)} cannot be added due to property ${nodes.get(to)} ${label} ${nodes.get(from)}<br>`);
+            $('#logs').prepend(`<div class="red">Property ${nodes.get(from)} ${label} ${nodes.get(to)} cannot be added due to property ${nodes.get(to)} ${label} ${nodes.get(from)}</div>`);
             return;
         }
         subClassProperty.set(propertyName,new property(from, to, label));
         allsubClassRelation.add(`${from}->${to}`);
-        $('#logs').append(`${nodes.get(from)} ${label} ${nodes.get(to)} property added<br>`);
+        $('#logs').prepend(`<div class="green">${nodes.get(from)} ${label} ${nodes.get(to)} property added</div>`);
         $('#subClassProperty').append(`<div id="${propertyName}">${nodes.get(from)} ${label} ${nodes.get(to)}</div>`);
     }else{
-        $('#logs').append(`Select the type of property<br>`);
+        $('#logs').prepend(`<div class="red">Select the type of property</div>`);
         return;
     }
 }
@@ -105,7 +105,7 @@ function addDefault(){
 function addDatatype(){
     var label = $('#newDatatypeLabel').val().trim();
     if(label==""){
-        $('#logs').append(`Label field can not be empty<br>`);
+        $('#logs').prepend(`<div class="red">Label field can not be empty</div>`);
         return;
     }
     var type = $('#newDatatypeType').val();
@@ -113,7 +113,7 @@ function addDatatype(){
     datatypes_cnt++;
     var datatypeName = "datatypes"+datatypes_cnt.toString();
     datatypes.set(datatypeName,new datatype(className,type,label));
-    $('#logs').append(`${type} datatype with property ${label} added to ${nodes.get(className)}<br>`);
+    $('#logs').prepend(`<div class="green">${type} datatype with property ${label} added to ${nodes.get(className)}</div>`);
     $('#datatypes').append(`<div id="${datatypeName}">${className} has ${type} ${label}</div>`);
 }
 
@@ -124,12 +124,20 @@ function classClick(){
 }
 
 function propertyClick(){
+    if(nodes.size < 2){
+        $('#logs').prepend(`<div class="red">Atleast 2 classes are needed to add property</div>`);
+        return;
+    }
     $('#addClass').hide();
     $('#addProperty').show();
     $('#addDatatype').hide();
 }
 
 function dataClick(){
+    if(nodes.size < 1){
+        $('#logs').prepend(`<div class="red">Atleast 1 class is needed to add property</div>`);
+        return;
+    }
     $('#addClass').hide();
     $('#addProperty').hide();
     $('#addDatatype').show();
