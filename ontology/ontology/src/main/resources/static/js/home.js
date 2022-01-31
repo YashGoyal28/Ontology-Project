@@ -8,6 +8,10 @@ const subClassProperty = new Map();
 const allsubClassRelation = new Set();
 const datatypes = new Map();
 
+window.onload = function(){
+    classClick();
+}
+
 class property{
     constructor(from, to, label) {
         this.from = from;
@@ -111,4 +115,22 @@ function addDatatype(){
     datatypes.set(datatypeName,new datatype(className,type,label));
     $('#logs').append(`${type} datatype with property ${label} added to ${nodes.get(className)}<br>`);
     $('#datatypes').append(`<div id="${datatypeName}">${className} has ${type} ${label}</div>`);
+}
+
+function classClick(){
+    $('#addClass').show();
+    $('#addProperty').hide();
+    $('#addDatatype').hide();
+}
+
+function propertyClick(){
+    $('#addClass').hide();
+    $('#addProperty').show();
+    $('#addDatatype').hide();
+}
+
+function dataClick(){
+    $('#addClass').hide();
+    $('#addProperty').hide();
+    $('#addDatatype').show();
 }

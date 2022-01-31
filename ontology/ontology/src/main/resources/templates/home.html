@@ -8,14 +8,14 @@
         <div class="container" style="height: 100%;">
             <div class="d-flex" style="height:50%;">
                 <div class="col-6" style="height:100%;">
-                    <!--button>Add Class</button>
-                    <button>Add Property</button>
-                    <button>Add Datatype</button-->
-
+                    <button onclick="classClick();" class="btn btn-primary">Add Class</button>
+                    <button onclick="propertyClick();" class="btn btn-primary">Add Property</button>
+                    <button onclick="dataClick();" class="btn btn-primary">Add Datatype</button>
+                    
                     <div id="addClass">
                         <label for="newClassLabel">Class Label</label>
                         <input id = "newClassLabel" name = "newClassLabel" type="text">
-                        <button onclick="addClass();">Add Class</button>
+                        <button onclick="addClass();" class="btn btn-primary">Add Class</button>
                     </div>
 
                     <div id="addProperty">
@@ -29,7 +29,7 @@
                         </select>
                         <select id="newPropertyTo" name="newPropertyTo" style="width:100%;">
                         </select>
-                        <button onclick="addProperty();">Add Property</button>
+                        <button onclick="addProperty();" class="btn btn-primary">Add Property</button>
                     </div>
 
                     <div id="addDatatype">
@@ -43,7 +43,7 @@
                         </select>
                         <select id="newDatatypeClass" name="newDatatypeClass">
                         </select>
-                        <button onclick="addDatatype();">Add Datatype</button>
+                        <button onclick="addDatatype();" class="btn btn-primary">Add Datatype</button>
                     </div>
                 </div>
                 <div class="col-3">
@@ -74,11 +74,6 @@
                 </div>
             </div>
         </div>
-        <!--div>
-            Datatypes - 
-            <div id="datatypes"></div>
-        </div-->
-        
     </body>
     <script src="/js/home.js"></script>
 </html>
