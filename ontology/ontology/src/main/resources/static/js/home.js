@@ -13,9 +13,9 @@ window.onload = function(){
 }
 
 class property{
-    constructor(from, to, label) {
-        this.from = from;
-        this.to = to;
+    constructor(domain, range, label) {
+        this.domain = domain;
+        this.range = range;
         this.label = label;
     }
 }
@@ -39,8 +39,8 @@ function addClass(){
     nodes.set(className,label);
     $('#logs').prepend(`<div class="green">New class labelled ${label} added</div>`);
     $('#classes').append(`<div id="${className}">${label}</div>`);
-    $('#newPropertyFrom').append(`<option value="${className}">${label} (${className})</option>`);
-    $('#newPropertyTo').append(`<option value="${className}">${label} (${className})</option>`);
+    $('#newPropertyDomain').append(`<option value="${className}">${label} (${className})</option>`);
+    $('#newPropertyRange').append(`<option value="${className}">${label} (${className})</option>`);
     $('#newDatatypeClass').append(`<option value="${className}">${label} (${className})</option>`);
 }
 
@@ -50,41 +50,41 @@ function addProperty(){
         objectProperty_cnt++;
         var propertyName = "objectProperty"+objectProperty_cnt.toString();
         var label = $('#newPropertyLabel').val().trim();
-        var from = $('#newPropertyFrom').val();
-        var to = $('#newPropertyTo').val();
+        var domain = $('#newPropertyDomain').val();
+        var range = $('#newPropertyRange').val();
         if(label==""){
             $('#logs').prepend(`<div class="red">Label field can not be empty</div>`);
             return;
         }
-        if(from==to){
+        if(domain==range){
             $('#logs').prepend(`<div class="red">Property can only be added between two different classes</div>`);
             return;
         }
-        objectProperty.set(propertyName,new property(from, to, label));
-        $('#logs').prepend(`<div class="green">${nodes.get(from)} ${label} ${nodes.get(to)} property added</div>`);
-        $('#objectProperty').append(`<div id="${propertyName}">${nodes.get(from)} ${label} ${nodes.get(to)}</div>`);
+        objectProperty.set(propertyName,new property(domain, range, label));
+        $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
+        $('#objectProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
     }else if(type=="2"){
         subClassProperty_cnt++;
         var propertyName = "subClassProperty"+subClassProperty_cnt.toString();
         var label = "Sub-class of";
-        var from = $('#newPropertyFrom').val();
-        var to = $('#newPropertyTo').val();
-        if(from==to){
+        var domain = $('#newPropertyDomain').val();
+        var range = $('#newPropertyRange').val();
+        if(domain==range){
             $('#logs').prepend(`<div class="red">Property can only be added between two different classes</div>`);
             return;
         }
-        if(allsubClassRelation.has(`${from}->${to}`)){
-            $('#logs').prepend(`<div class="yellow">Property ${nodes.get(from)} ${label} ${nodes.get(to)} is already added</div>`);
+        if(allsubClassRelation.has(`${domain}->${range}`)){
+            $('#logs').prepend(`<div class="yellow">Property ${nodes.get(domain)} ${label} ${nodes.get(range)} is already added</div>`);
             return;
         }
-        if(allsubClassRelation.has(`${to}->${from}`)){
-            $('#logs').prepend(`<div class="red">Property ${nodes.get(from)} ${label} ${nodes.get(to)} cannot be added due to property ${nodes.get(to)} ${label} ${nodes.get(from)}</div>`);
+        if(allsubClassRelation.has(`${range}->${domain}`)){
+            $('#logs').prepend(`<div class="red">Property ${nodes.get(domain)} ${label} ${nodes.get(range)} cannot be added due to property ${nodes.get(range)} ${label} ${nodes.get(domain)}</div>`);
             return;
         }
-        subClassProperty.set(propertyName,new property(from, to, label));
-        allsubClassRelation.add(`${from}->${to}`);
-        $('#logs').prepend(`<div class="green">${nodes.get(from)} ${label} ${nodes.get(to)} property added</div>`);
-        $('#subClassProperty').append(`<div id="${propertyName}">${nodes.get(from)} ${label} ${nodes.get(to)}</div>`);
+        subClassProperty.set(propertyName,new property(domain, range, label));
+        allsubClassRelation.add(`${domain}->${range}`);
+        $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
+        $('#subClassProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
     }else{
         $('#logs').prepend(`<div class="red">Select the type of property</div>`);
         return;
