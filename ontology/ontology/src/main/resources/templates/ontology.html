@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+    <head th:replace="layouts/header :: header"></head>
+    <head>
+        <!-- <link href="/css/home.css" rel="stylesheet"> -->
+    </head>
+    <body style="height: 100%; background-color: black;">
+        <div class="d-flex justify-content-center pt-3" style="color: rgb(105, 105, 241);">
+            <h1>Ontology</h1>
+        </div>
+        <div id="onto" class="container pt-4" style="height: 80%;color: aliceblue;">
+           <iframe id="ontology" style="height: 100%;width: 100%;border: none;" th:src="${session.path}"></iframe>
+        </div>
+    </body>
+    <script src="/js/ontology.js"></script>
+</html>

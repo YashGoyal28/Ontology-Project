@@ -20,7 +20,7 @@
                             </div>
                         </div>
                         
-                        <button onclick="addClass();" class="btn btn-primary">Add Class</button>
+                        <button id="addClassbtn" class="btn btn-primary">Add Class</button>
                     </div>
 
                     <div id="addProperty" style="display: none;" class="pt-3">
@@ -58,7 +58,7 @@
                             </div>
                         </div>
 
-                        <button onclick="addProperty();" class="btn btn-primary">Add Property</button>
+                        <button id="addPropertybtn" class="btn btn-primary">Add Property</button>
                     </div>
 
                     <div id="addDatatype" style="display: none;" class="pt-3">
@@ -89,7 +89,7 @@
                             </div>
                         </div>
 
-                        <button onclick="addDatatype();" class="btn btn-primary">Add Datatype</button>
+                        <button id="addDatatypebtn" class="btn btn-primary">Add Datatype</button>
                     </div>
                 </div>
                 <div class="col-3">
@@ -122,8 +122,13 @@
                     <div>
                         Log -
                     </div>
-                    <div id="logs" class="scrollbar console" style="height:100%;overflow: scroll;"></div>
+                    <div id="logs" class="scrollbar console" style="height:90%;overflow: scroll;"></div>
                 </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <form action="/generate" method="post">
+                    <button type="submit" class="btn btn-primary">Generate Ontology</button>
+                </form>
             </div>
         </div>
     </body>
