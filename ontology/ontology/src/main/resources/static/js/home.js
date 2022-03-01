@@ -28,6 +28,8 @@ class datatype{
     }
 }
 
+
+
 $("#addClassbtn").click( function(e){
     e.preventDefault();
     var label = $('#newClassLabel').val().trim();
@@ -39,7 +41,12 @@ $("#addClassbtn").click( function(e){
     var className = "class"+nodes_cnt.toString();
     nodes.set(className,label);
     $('#logs').prepend(`<div class="green">New class labelled ${label} added</div>`);
-    $('#classes').append(`<div id="${className}">${label}</div>`);
+    $('#classes').append(`
+        <div class="list_objects" id="${className}">
+            ${label}
+            <div style="cursor:pointer;" id="${className}delete" class="deleteClassbtn" onclick="deleteClassbtn(this);"><img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/></div>
+        </div>
+    `);
     $('#newPropertyDomain').append(`<option value="${className}">${label} (${className})</option>`);
     $('#newPropertyRange').append(`<option value="${className}">${label} (${className})</option>`);
     $('#newDatatypeClass').append(`<option value="${className}">${label} (${className})</option>`);
@@ -53,6 +60,22 @@ $("#addClassbtn").click( function(e){
         },
     });
 });
+
+function deleteClassbtn(e){
+    var className = e.id;
+    className = className.slice(0, -6);
+    $('#'+className).remove();
+    $('#logs').prepend(`<div class="red">Class labelled ${nodes.get(className)} deleted</div>`);
+    nodes.delete(className);
+    $.ajax({
+        type: "POST",
+        url: "delete_class",
+        data: {
+            "className" : className,
+        },
+    });
+}
+
 
 
 $("#addPropertybtn").click( function(e){
@@ -74,7 +97,12 @@ $("#addPropertybtn").click( function(e){
         }
         objectProperty.set(propertyName,new property(domain, range, label));
         $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
-        $('#objectProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
+        $('#objectProperty').append(`
+            <div class="list_objects" id="${propertyName}">
+                <div>${nodes.get(domain)} ${label} ${nodes.get(range)}</div>
+                <div style="cursor:pointer;"><img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/></div>
+            </div>
+        `);
 
         $.ajax({
             type: "POST",
@@ -107,7 +135,12 @@ $("#addPropertybtn").click( function(e){
         subClassProperty.set(propertyName,new property(domain, range, label));
         allsubClassRelation.add(`${domain}->${range}`);
         $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
-        $('#subClassProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
+        $('#subClassProperty').append(`
+            <div class="list_objects" id="${propertyName}">
+                <div>${nodes.get(domain)} ${label} ${nodes.get(range)}</div>
+                <div style="cursor:pointer;"><img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/></div>
+            </div>
+        `);
 
         $.ajax({
             type: "POST",

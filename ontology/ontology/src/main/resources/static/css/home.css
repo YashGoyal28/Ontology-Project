@@ -84,3 +84,9 @@ button{
 .brown {
 	color: #AB7967;
 }
+
+.list_objects{
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+}

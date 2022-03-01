@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.RemoteEndpoint.Async;
 
 import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.ObjectProperty;
@@ -66,9 +67,12 @@ public class HomeController {
 
     @PostMapping("/delete_class")
     public ResponseEntity<?> deleteClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
         String className = req.getParameter("className");
         nodes.get(className).remove();
-        return ResponseEntity.ok("end");
+        
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
     }
 
     @PostMapping("/add_datatype")
@@ -142,8 +146,8 @@ public class HomeController {
 
         m.close();
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        session.setAttribute("path", "/ontology/ont"+ cnt.toString()+".txt");
-        session.setAttribute("download_path", "/ontology/ont"+ cnt.toString()+".owl");
+        session.setAttribute("path", "/ontology/ont" + cnt.toString() + ".txt");
+        session.setAttribute("download_path", "/ontology/ont" + cnt.toString() + ".owl");
         System.out.println(session.getAttribute("path"));
         cnt++;
         session.setAttribute("count", cnt);
@@ -152,6 +156,11 @@ public class HomeController {
 
     @GetMapping("/ontology")
     public String displayOntology(Model model, HttpSession session){
+        try {
+            Thread.sleep(1 * 1000);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
         return "ontology";
     }
 }
