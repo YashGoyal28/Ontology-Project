@@ -105,6 +105,13 @@ public class HomeController {
         return ResponseEntity.ok(data); 
     }
 
+    @PostMapping("/delete_datatye")
+    public ResponseEntity<?> deleteDatatype(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        String dataTypeName = req.getParameter("datatypeName");
+        datatypes.get(dataTypeName).remove();
+        return ResponseEntity.ok("end");
+    }
+
     @PostMapping("/add_sub_class")
     public ResponseEntity<?> addSubClass(Model model, HttpServletRequest req) throws Exception{
         Hashtable<String, String> data = new Hashtable<String, String>();
@@ -117,6 +124,14 @@ public class HomeController {
         return ResponseEntity.ok(data); 
     }
 
+    @PostMapping("/delete_sub_class")
+    public ResponseEntity<?> deleteSubClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        String range = req.getParameter("range");
+        String domain = req.getParameter("domain");
+        nodes.get(range).removeSubClass(nodes.get(domain));
+        return ResponseEntity.ok("end");
+    }
+    
     @PostMapping("/add_object_property")
     public ResponseEntity<?> addObjectProperty(Model model, HttpServletRequest req, HttpSession session) throws Exception{
         Hashtable<String, String> data = new Hashtable<String, String>();
@@ -132,6 +147,13 @@ public class HomeController {
 
         data.put("result", "success");
         return ResponseEntity.ok(data); 
+    }
+
+    @PostMapping("/delete_object_property")
+    public ResponseEntity<?> deleteObjectProperty(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        String propertyName = req.getParameter("propertyName");
+        objectProperty.get(propertyName).remove();
+        return ResponseEntity.ok("end");
     }
 
     @PostMapping("/generate")
