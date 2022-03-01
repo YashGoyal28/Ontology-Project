@@ -38,6 +38,9 @@ public class HomeController {
     
     @GetMapping("/")
     public String home(Model model, HttpSession session) throws Exception{
+        if(session.getAttribute("count") == null){
+            session.setAttribute("count", 0);
+        }
         m.close();
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
         nodes.clear();
@@ -59,6 +62,13 @@ public class HomeController {
 
         data.put("result", "success");
         return ResponseEntity.ok(data); 
+    }
+
+    @PostMapping("/delete_class")
+    public ResponseEntity<?> deleteClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        String className = req.getParameter("className");
+        nodes.get(className).remove();
+        return ResponseEntity.ok("end");
     }
 
     @PostMapping("/add_datatype")
@@ -122,17 +132,26 @@ public class HomeController {
 
     @PostMapping("/generate")
     public String createOntology(HttpSession session) throws Exception{
-        FileOutputStream myWriter = new FileOutputStream("src/main/resources/static/ontology/ont.txt");
+        Integer cnt = Integer.parseInt(session.getAttribute("count").toString());
+        FileOutputStream myWriter = new FileOutputStream("src/main/resources/static/ontology/ont" + cnt.toString() + ".txt");
         m.write(myWriter,"RDF/XML-ABBREV", xmlbase);
         myWriter.close();
+        myWriter = new FileOutputStream("src/main/resources/static/ontology/ont" + cnt.toString() + ".owl");
+        m.write(myWriter,"RDF/XML-ABBREV", xmlbase);
+        myWriter.close();
+
         m.close();
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+        session.setAttribute("path", "/ontology/ont"+ cnt.toString()+".txt");
+        session.setAttribute("download_path", "/ontology/ont"+ cnt.toString()+".owl");
+        System.out.println(session.getAttribute("path"));
+        cnt++;
+        session.setAttribute("count", cnt);
         return "redirect:/ontology";
     }
 
     @GetMapping("/ontology")
     public String displayOntology(Model model, HttpSession session){
-        session.setAttribute("path", "/ontology/ont.txt?try="+Math.random());
         return "ontology";
     }
 }
