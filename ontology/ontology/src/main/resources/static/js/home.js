@@ -103,6 +103,16 @@ function deleteClassbtn(e){
         let obj = document.getElementById(i+'delete');
         deletePropertybtn(obj,false);
     }
+    rem = [];
+    for(const [key,value] of subClassProperty.entries()){
+        if(value.domain==className || value.range==className){
+            rem.push(key);
+        }
+    }
+    for(let i of rem){
+        let obj = document.getElementById(i+'delete');
+        deleteSubclassbtn(obj,false,false);
+    }
     $('#logs').prepend(`<div class="red">Class labelled ${nodes.get(className)} deleted</div>`);
     nodes.delete(className);
     $.ajax({
@@ -152,7 +162,7 @@ $("#addPropertybtn").click( function(e){
                         </div>
                         <div class="modal-footer justify-content-center">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deletePropertybtn(this);" data-dismiss="modal">Delete</button>
+                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deletePropertybtn(this,true);" data-dismiss="modal">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -214,7 +224,7 @@ $("#addPropertybtn").click( function(e){
                         </div>
                         <div class="modal-footer justify-content-center">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deletePropertybtn(this);" data-dismiss="modal">Delete</button>
+                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deleteSubclassbtn(this,true);" data-dismiss="modal">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -250,6 +260,7 @@ function deletePropertybtn(e,log=true){
     propertyName = propertyName.slice(0, -6);
     $('#deleteModal'+propertyName).remove();
     $('#'+propertyName).remove();
+    // console.log(propertyName);
     var prop = objectProperty.get(propertyName);
     var domain = prop.domain;
     var range = prop.range;
@@ -265,7 +276,7 @@ function deletePropertybtn(e,log=true){
     });
 }
 
-function deleteSubclassbtn(e,log=true){
+function deleteSubclassbtn(e,log=true,backend=true){
     var propertyName = e.id;
     propertyName = propertyName.slice(0, -6);
     $('#deleteModal'+propertyName).remove();
@@ -276,14 +287,16 @@ function deleteSubclassbtn(e,log=true){
     var label = prop.label;
     if(log) $('#logs').prepend(`<div class="red">${nodes.get(domain)} ${label} ${nodes.get(range)} property deleted</div>`);
     subClassProperty.delete(propertyName);
-    $.ajax({
-        type: "POST",
-        url: "delete_sub_class",
-        data: {
-            "range" : range,
-            "domain" : domain,
-        },
-    });
+    if(backend){
+        $.ajax({
+            type: "POST",
+            url: "delete_sub_class",
+            data: {
+                "range" : range,
+                "domain" : domain,
+            },
+        });
+    }
 }
 
 
