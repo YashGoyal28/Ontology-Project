@@ -107,9 +107,12 @@ public class HomeController {
 
     @PostMapping("/delete_datatye")
     public ResponseEntity<?> deleteDatatype(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
         String dataTypeName = req.getParameter("datatypeName");
         datatypes.get(dataTypeName).remove();
-        return ResponseEntity.ok("end");
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
     }
 
     @PostMapping("/add_sub_class")
@@ -126,10 +129,13 @@ public class HomeController {
 
     @PostMapping("/delete_sub_class")
     public ResponseEntity<?> deleteSubClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
         String range = req.getParameter("range");
         String domain = req.getParameter("domain");
         nodes.get(range).removeSubClass(nodes.get(domain));
-        return ResponseEntity.ok("end");
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
     }
     
     @PostMapping("/add_object_property")
@@ -151,9 +157,12 @@ public class HomeController {
 
     @PostMapping("/delete_object_property")
     public ResponseEntity<?> deleteObjectProperty(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
         String propertyName = req.getParameter("propertyName");
         objectProperty.get(propertyName).remove();
-        return ResponseEntity.ok("end");
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
     }
 
     @PostMapping("/generate")
@@ -170,7 +179,7 @@ public class HomeController {
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
         session.setAttribute("path", "/ontology/ont" + cnt.toString() + ".txt");
         session.setAttribute("download_path", "/ontology/ont" + cnt.toString() + ".owl");
-        System.out.println(session.getAttribute("path"));
+        // System.out.println(session.getAttribute("path"));
         cnt++;
         session.setAttribute("count", cnt);
         return "redirect:/ontology";
