@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.RemoteEndpoint.Async;
 
 import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.ObjectProperty;
@@ -38,6 +39,9 @@ public class HomeController {
     
     @GetMapping("/")
     public String home(Model model, HttpSession session) throws Exception{
+        if(session.getAttribute("count") == null){
+            session.setAttribute("count", 0);
+        }
         m.close();
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
         nodes.clear();
@@ -57,6 +61,16 @@ public class HomeController {
         newClass.addLabel(label,"en");
         nodes.put(className, newClass);
 
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
+    }
+
+    @PostMapping("/delete_class")
+    public ResponseEntity<?> deleteClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
+        String className = req.getParameter("className");
+        nodes.get(className).remove();
+        
         data.put("result", "success");
         return ResponseEntity.ok(data); 
     }
@@ -91,6 +105,16 @@ public class HomeController {
         return ResponseEntity.ok(data); 
     }
 
+    @PostMapping("/delete_datatye")
+    public ResponseEntity<?> deleteDatatype(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
+        String dataTypeName = req.getParameter("datatypeName");
+        datatypes.get(dataTypeName).remove();
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
+    }
+
     @PostMapping("/add_sub_class")
     public ResponseEntity<?> addSubClass(Model model, HttpServletRequest req) throws Exception{
         Hashtable<String, String> data = new Hashtable<String, String>();
@@ -103,6 +127,17 @@ public class HomeController {
         return ResponseEntity.ok(data); 
     }
 
+    @PostMapping("/delete_sub_class")
+    public ResponseEntity<?> deleteSubClass(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
+        String range = req.getParameter("range");
+        String domain = req.getParameter("domain");
+        nodes.get(range).removeSubClass(nodes.get(domain));
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
+    }
+    
     @PostMapping("/add_object_property")
     public ResponseEntity<?> addObjectProperty(Model model, HttpServletRequest req, HttpSession session) throws Exception{
         Hashtable<String, String> data = new Hashtable<String, String>();
@@ -120,19 +155,43 @@ public class HomeController {
         return ResponseEntity.ok(data); 
     }
 
+    @PostMapping("/delete_object_property")
+    public ResponseEntity<?> deleteObjectProperty(Model model, HttpServletRequest req, HttpSession session) throws Exception{
+        Hashtable<String, String> data = new Hashtable<String, String>();
+        String propertyName = req.getParameter("propertyName");
+        objectProperty.get(propertyName).remove();
+
+        data.put("result", "success");
+        return ResponseEntity.ok(data); 
+    }
+
     @PostMapping("/generate")
     public String createOntology(HttpSession session) throws Exception{
-        FileOutputStream myWriter = new FileOutputStream("src/main/resources/static/ontology/ont.txt");
+        Integer cnt = Integer.parseInt(session.getAttribute("count").toString());
+        FileOutputStream myWriter = new FileOutputStream("src/main/resources/static/ontology/ont" + cnt.toString() + ".txt");
         m.write(myWriter,"RDF/XML-ABBREV", xmlbase);
         myWriter.close();
+        myWriter = new FileOutputStream("src/main/resources/static/ontology/ont" + cnt.toString() + ".owl");
+        m.write(myWriter,"RDF/XML-ABBREV", xmlbase);
+        myWriter.close();
+
         m.close();
         m = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+        session.setAttribute("path", "/ontology/ont" + cnt.toString() + ".txt");
+        session.setAttribute("download_path", "/ontology/ont" + cnt.toString() + ".owl");
+        // System.out.println(session.getAttribute("path"));
+        cnt++;
+        session.setAttribute("count", cnt);
         return "redirect:/ontology";
     }
 
     @GetMapping("/ontology")
     public String displayOntology(Model model, HttpSession session){
-        session.setAttribute("path", "/ontology/ont.txt?try="+Math.random());
+        try {
+            Thread.sleep(1 * 1000);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
         return "ontology";
     }
 }

@@ -7,6 +7,7 @@ const objectProperty = new Map();
 const subClassProperty = new Map();
 const allsubClassRelation = new Set();
 const datatypes = new Map();
+var confirm=0;
 
 window.onload = function(){
     classClick();
@@ -28,6 +29,7 @@ class datatype{
     }
 }
 
+
 $("#addClassbtn").click( function(e){
     e.preventDefault();
     var label = $('#newClassLabel').val().trim();
@@ -39,10 +41,39 @@ $("#addClassbtn").click( function(e){
     var className = "class"+nodes_cnt.toString();
     nodes.set(className,label);
     $('#logs').prepend(`<div class="green">New class labelled ${label} added</div>`);
-    $('#classes').append(`<div id="${className}">${label}</div>`);
-    $('#newPropertyDomain').append(`<option value="${className}">${label} (${className})</option>`);
-    $('#newPropertyRange').append(`<option value="${className}">${label} (${className})</option>`);
-    $('#newDatatypeClass').append(`<option value="${className}">${label} (${className})</option>`);
+    $('#modals').append(`
+        <div id="deleteModal${className}" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header flex-column">
+                        <div class="icon-box">
+                            <i class="material-icons">&#xE5CD;</i>
+                        </div>
+                        <h4 class="modal-title w-100">Are you sure?</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you really want to delete these records? This process cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="${className}delete" class="deleteClassbtn" onclick="deleteClassbtn(this);" data-dismiss="modal">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+    $('#classes').append(`
+        <div class="list_objects" id="${className}">
+            ${label}
+            <div href="#deleteModal${className}" data-toggle="modal" style="cursor:pointer;">
+                <img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/>
+            </div>
+        </div>
+    `);
+    $('#newPropertyDomain').append(`<option id="${className}domain" value="${className}">${label} (${className})</option>`);
+    $('#newPropertyRange').append(`<option id="${className}range" value="${className}">${label} (${className})</option>`);
+    $('#newDatatypeClass').append(`<option id="${className}datatypeclass" value="${className}">${label} (${className})</option>`);
 
     $.ajax({
         type: "POST",
@@ -53,6 +84,47 @@ $("#addClassbtn").click( function(e){
         },
     });
 });
+
+function deleteClassbtn(e){
+    var className = e.id;
+    className = className.slice(0, -6);
+    $('#deleteModal'+className).remove();
+    $('#'+className).remove();
+    $('#'+className+'domain').remove();
+    $('#'+className+'range').remove();
+    $('#'+className+'datatypeclass').remove();
+    var rem = [];
+    for(const [key,value] of objectProperty.entries()){
+        if(value.domain==className || value.range==className){
+            rem.push(key);
+        }
+    }
+    for(let i of rem){
+        let obj = document.getElementById(i+'delete');
+        deletePropertybtn(obj,false);
+    }
+    rem = [];
+    for(const [key,value] of subClassProperty.entries()){
+        if(value.domain==className || value.range==className){
+            rem.push(key);
+        }
+    }
+    for(let i of rem){
+        let obj = document.getElementById(i+'delete');
+        deleteSubclassbtn(obj,false,false);
+    }
+    $('#logs').prepend(`<div class="red">Class labelled ${nodes.get(className)} deleted</div>`);
+    nodes.delete(className);
+    $.ajax({
+        type: "POST",
+        url: "delete_class",
+        data: {
+            "className" : className,
+        },
+    });
+    
+}
+
 
 
 $("#addPropertybtn").click( function(e){
@@ -74,7 +146,36 @@ $("#addPropertybtn").click( function(e){
         }
         objectProperty.set(propertyName,new property(domain, range, label));
         $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
-        $('#objectProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
+        $('#modals').append(`
+            <div id="deleteModal${propertyName}" class="modal fade">
+                <div class="modal-dialog modal-confirm">
+                    <div class="modal-content">
+                        <div class="modal-header flex-column">
+                            <div class="icon-box">
+                                <i class="material-icons">&#xE5CD;</i>
+                            </div>
+                            <h4 class="modal-title w-100">Are you sure?</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Do you really want to delete these records? This process cannot be undone.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deletePropertybtn(this,true);" data-dismiss="modal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        $('#objectProperty').append(`
+            <div class="list_objects" id="${propertyName}">
+                <div>${nodes.get(domain)} ${label} ${nodes.get(range)}</div>
+                <div href="#deleteModal${propertyName}" data-toggle="modal" style="cursor:pointer;">
+                    <img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/>
+                </div>
+            </div>
+        `);
 
         $.ajax({
             type: "POST",
@@ -107,7 +208,36 @@ $("#addPropertybtn").click( function(e){
         subClassProperty.set(propertyName,new property(domain, range, label));
         allsubClassRelation.add(`${domain}->${range}`);
         $('#logs').prepend(`<div class="green">${nodes.get(domain)} ${label} ${nodes.get(range)} property added</div>`);
-        $('#subClassProperty').append(`<div id="${propertyName}">${nodes.get(domain)} ${label} ${nodes.get(range)}</div>`);
+        $('#modals').append(`
+            <div id="deleteModal${propertyName}" class="modal fade">
+                <div class="modal-dialog modal-confirm">
+                    <div class="modal-content">
+                        <div class="modal-header flex-column">
+                            <div class="icon-box">
+                                <i class="material-icons">&#xE5CD;</i>
+                            </div>
+                            <h4 class="modal-title w-100">Are you sure?</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Do you really want to delete these records? This process cannot be undone.</p>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="${propertyName}delete" class="deleteClassbtn" onclick="deleteSubclassbtn(this,true);" data-dismiss="modal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        $('#subClassProperty').append(`
+            <div class="list_objects" id="${propertyName}">
+                <div>${nodes.get(domain)} ${label} ${nodes.get(range)}</div>
+                <div href="#deleteModal${propertyName}" data-toggle="modal" style="cursor:pointer;">
+                    <img src="https://img.icons8.com/material/24/ffffff/filled-trash.png"/>
+                </div>
+            </div>
+        `);
 
         $.ajax({
             type: "POST",
@@ -124,6 +254,50 @@ $("#addPropertybtn").click( function(e){
         return;
     }
 });
+
+function deletePropertybtn(e,log=true){
+    var propertyName = e.id;
+    propertyName = propertyName.slice(0, -6);
+    $('#deleteModal'+propertyName).remove();
+    $('#'+propertyName).remove();
+    // console.log(propertyName);
+    var prop = objectProperty.get(propertyName);
+    var domain = prop.domain;
+    var range = prop.range;
+    var label = prop.label;
+    if(log) $('#logs').prepend(`<div class="red">${nodes.get(domain)} ${label} ${nodes.get(range)} property deleted</div>`);
+    objectProperty.delete(propertyName);
+    $.ajax({
+        type: "POST",
+        url: "delete_object_property",
+        data: {
+            "propertyName" : propertyName,
+        },
+    });
+}
+
+function deleteSubclassbtn(e,log=true,backend=true){
+    var propertyName = e.id;
+    propertyName = propertyName.slice(0, -6);
+    $('#deleteModal'+propertyName).remove();
+    $('#'+propertyName).remove();
+    var prop = subClassProperty.get(propertyName);
+    var domain = prop.domain;
+    var range = prop.range;
+    var label = prop.label;
+    if(log) $('#logs').prepend(`<div class="red">${nodes.get(domain)} ${label} ${nodes.get(range)} property deleted</div>`);
+    subClassProperty.delete(propertyName);
+    if(backend){
+        $.ajax({
+            type: "POST",
+            url: "delete_sub_class",
+            data: {
+                "range" : range,
+                "domain" : domain,
+            },
+        });
+    }
+}
 
 
 function removeDefault(){
@@ -162,6 +336,33 @@ $("#addDatatypebtn").click( function(e){
         },
     });
 });
+
+
+// function deleteDatatypebtn(e){
+//     var label = $('#newDatatypeLabel').val().trim();
+//     if(label==""){
+//         $('#logs').prepend(`<div class="red">Label field can not be empty</div>`);
+//         return;
+//     }
+//     var type = $('#newDatatypeType').val();
+//     var className = $('#newDatatypeClass').val();
+//     datatypes_cnt++;
+//     var datatypeName = "datatypes"+datatypes_cnt.toString();
+//     datatypes.set(datatypeName,new datatype(className,type,label));
+//     $('#logs').prepend(`<div class="green">${type} datatype with property ${label} added to ${nodes.get(className)}</div>`);
+//     $('#datatypes').append(`<div id="${datatypeName}">${className} has ${type} ${label}</div>`);
+
+//     $.ajax({
+//         type: "POST",
+//         url: "add_datatype",
+//         data: {
+//             "className" : className,
+//             "type" : type,
+//             "label" : label,
+//             "datatypeName" : datatypeName,
+//         },
+//     });
+// }
 
 function classClick(){
     $('#addClass').show();
