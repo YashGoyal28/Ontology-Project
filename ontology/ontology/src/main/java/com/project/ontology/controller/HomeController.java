@@ -1,6 +1,7 @@
 package com.project.ontology.controller;
 
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.tokenize.SimpleTokenizer;
+import opennlp.tools.util.Span;
 
 @Controller
 @Component
@@ -192,5 +198,19 @@ public class HomeController {
             Thread.currentThread().interrupt();
         }
         return "ontology";
+    }
+
+    @GetMapping("/process")
+    public String process(Model model, HttpSession session) throws Exception{
+        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
+        String[] tokens = tokenizer.tokenize("John has a friend whose name is Eden");
+        InputStream inputStreamNameFinder = getClass().getResourceAsStream("/models/en-ner-person.bin");
+        TokenNameFinderModel nfmodel = new TokenNameFinderModel(inputStreamNameFinder);
+        NameFinderME nameFinderME = new NameFinderME(nfmodel);
+        for(Span i : nameFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        return "home";
     }
 }
