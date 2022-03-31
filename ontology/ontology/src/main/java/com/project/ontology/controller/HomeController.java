@@ -203,7 +203,8 @@ public class HomeController {
     @GetMapping("/process")
     public String process(Model model, HttpSession session) throws Exception{
         SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
-        String[] tokens = tokenizer.tokenize("John has a friend whose name is Eden");
+        String[] tokens = tokenizer.tokenize("John has a friend whose name is Eden. They live in England. They work for BMW. They met in January. They earn 10000$ every month. They donate 20%.");
+        // Name Finder
         InputStream inputStreamNameFinder = getClass().getResourceAsStream("/models/en-ner-person.bin");
         TokenNameFinderModel nfmodel = new TokenNameFinderModel(inputStreamNameFinder);
         NameFinderME nameFinderME = new NameFinderME(nfmodel);
@@ -211,6 +212,55 @@ public class HomeController {
             System.out.println(i.getStart());
             System.out.println(i.getEnd());
         }
+        //Location Finder
+        InputStream inputStreamLocationFinder = getClass().getResourceAsStream("/models/en-ner-location.bin");
+        TokenNameFinderModel lfmodel = new TokenNameFinderModel(inputStreamLocationFinder);
+        NameFinderME locationFinderME = new NameFinderME(lfmodel);
+        for(Span i : locationFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        //Organization Finder
+        InputStream inputStreamOrganizationFinder = getClass().getResourceAsStream("/models/en-ner-organization.bin");
+        TokenNameFinderModel ofmodel = new TokenNameFinderModel(inputStreamOrganizationFinder);
+        NameFinderME organizationFinderME = new NameFinderME(ofmodel);
+        for(Span i : organizationFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        //Date Finder
+        InputStream inputStreamDateFinder = getClass().getResourceAsStream("/models/en-ner-date.bin");
+        TokenNameFinderModel dfmodel = new TokenNameFinderModel(inputStreamDateFinder);
+        NameFinderME dateFinderME = new NameFinderME(dfmodel);
+        for(Span i : dateFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        //Money Finder
+        InputStream inputStreamMoneyFinder = getClass().getResourceAsStream("/models/en-ner-money.bin");
+        TokenNameFinderModel mfmodel = new TokenNameFinderModel(inputStreamMoneyFinder);
+        NameFinderME moneyFinderME = new NameFinderME(mfmodel);
+        for(Span i : moneyFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        //Percentage Finder
+        InputStream inputStreamPercentageFinder = getClass().getResourceAsStream("/models/en-ner-percentage.bin");
+        TokenNameFinderModel pfmodel = new TokenNameFinderModel(inputStreamPercentageFinder);
+        NameFinderME percentageFinderME = new NameFinderME(pfmodel);
+        for(Span i : percentageFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        //Time Finder
+        InputStream inputStreamTimeFinder = getClass().getResourceAsStream("/models/en-ner-time.bin");
+        TokenNameFinderModel tfmodel = new TokenNameFinderModel(inputStreamTimeFinder);
+        NameFinderME timeFinderME = new NameFinderME(tfmodel);
+        for(Span i : timeFinderME.find(tokens)){
+            System.out.println(i.getStart());
+            System.out.println(i.getEnd());
+        }
+        // commit update
         return "home";
     }
 }
