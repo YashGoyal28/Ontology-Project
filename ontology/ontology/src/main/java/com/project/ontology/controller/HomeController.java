@@ -2,6 +2,7 @@ package com.project.ontology.controller;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFWriterI;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.function.library.date;
 import org.apache.jena.vocabulary.XSD;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -203,36 +205,43 @@ public class HomeController {
     @GetMapping("/process")
     public String process(Model model, HttpSession session) throws Exception{
         SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
-        String[] tokens = tokenizer.tokenize("John has a friend whose name is Eden. They live in England. They work for BMW. They met in January. They earn 10000$ every month. They donate 20%.");
+        String[] tokens = tokenizer.tokenize("John has a friend whose name is Eden. They live in England. They work for BMW. They met on 5th January. They earn 10000 every month. They donate 20%.");
+        ArrayList <String> names = new ArrayList<>(), organization = new ArrayList<>(), location = new ArrayList<>(), date = new ArrayList<>(), money = new ArrayList<>(), percentage = new ArrayList<>(), time = new ArrayList<>();
         // Name Finder
         InputStream inputStreamNameFinder = getClass().getResourceAsStream("/models/en-ner-person.bin");
         TokenNameFinderModel nfmodel = new TokenNameFinderModel(inputStreamNameFinder);
         NameFinderME nameFinderME = new NameFinderME(nfmodel);
         for(Span i : nameFinderME.find(tokens)){
-            System.out.println(i.getStart());
-            System.out.println(i.getEnd());
+            names.add(tokens[i.getStart()]);
+            // System.out.println(tokens[i.getStart()]);
+        }
+        for (String s : names){
+            HttpServletRequest new_req;
+            new_req.setAttribute(name, o);
+            addClass(model, req, session)
         }
         //Location Finder
         InputStream inputStreamLocationFinder = getClass().getResourceAsStream("/models/en-ner-location.bin");
         TokenNameFinderModel lfmodel = new TokenNameFinderModel(inputStreamLocationFinder);
         NameFinderME locationFinderME = new NameFinderME(lfmodel);
         for(Span i : locationFinderME.find(tokens)){
-            System.out.println(i.getStart());
-            System.out.println(i.getEnd());
+            location.add(tokens[i.getStart()]);
+            // System.out.println(tokens[i.getStart()]);
         }
         //Organization Finder
         InputStream inputStreamOrganizationFinder = getClass().getResourceAsStream("/models/en-ner-organization.bin");
         TokenNameFinderModel ofmodel = new TokenNameFinderModel(inputStreamOrganizationFinder);
         NameFinderME organizationFinderME = new NameFinderME(ofmodel);
         for(Span i : organizationFinderME.find(tokens)){
-            System.out.println(i.getStart());
-            System.out.println(i.getEnd());
+            organization.add(tokens[i.getStart()]);
+            // System.out.println(tokens[i.getStart()]);
         }
         //Date Finder
         InputStream inputStreamDateFinder = getClass().getResourceAsStream("/models/en-ner-date.bin");
         TokenNameFinderModel dfmodel = new TokenNameFinderModel(inputStreamDateFinder);
         NameFinderME dateFinderME = new NameFinderME(dfmodel);
         for(Span i : dateFinderME.find(tokens)){
+            date.add(tokens[i.getStart()]);
             System.out.println(i.getStart());
             System.out.println(i.getEnd());
         }
@@ -241,6 +250,7 @@ public class HomeController {
         TokenNameFinderModel mfmodel = new TokenNameFinderModel(inputStreamMoneyFinder);
         NameFinderME moneyFinderME = new NameFinderME(mfmodel);
         for(Span i : moneyFinderME.find(tokens)){
+            // money.add(tokens[i.getStart()]);
             System.out.println(i.getStart());
             System.out.println(i.getEnd());
         }
@@ -249,18 +259,16 @@ public class HomeController {
         TokenNameFinderModel pfmodel = new TokenNameFinderModel(inputStreamPercentageFinder);
         NameFinderME percentageFinderME = new NameFinderME(pfmodel);
         for(Span i : percentageFinderME.find(tokens)){
-            System.out.println(i.getStart());
-            System.out.println(i.getEnd());
+            percentage.add(tokens[i.getStart()]);
         }
         //Time Finder
         InputStream inputStreamTimeFinder = getClass().getResourceAsStream("/models/en-ner-time.bin");
         TokenNameFinderModel tfmodel = new TokenNameFinderModel(inputStreamTimeFinder);
         NameFinderME timeFinderME = new NameFinderME(tfmodel);
         for(Span i : timeFinderME.find(tokens)){
-            System.out.println(i.getStart());
-            System.out.println(i.getEnd());
+            time.add(tokens[i.getStart()]);
+            // System.out.println(tokens[i.getStart()]);
         }
-        // commit update
         return "home";
     }
 }
